@@ -5,7 +5,7 @@ sekiro测试网站没有提供任何防火墙防护。但是 https://sekiro.virj
 如果你希望使用我们系统的线上生产环境，可以走我们商务合作通道(wechat:datiao-world)。以下IP为违规IP，他们使用大量请求调用sekiro网站服务。导致sekiro服务器消耗
 
 ## 交流群
-[微信交流群-点击打开图片](http://oss.virjar.com/ratel/sekiro-group.png)
+[微信交流群-点击打开图片] (http://oss.virjar.com/ratel/sekiro-group.png)
 
 
 
@@ -111,7 +111,7 @@ docker run --restart=always --name sekiro-server -p 5600:5600 -p 5601:5601 -p 56
 
 ```
 dependencies {
-    implementation 'com.virjar:sekiro-api:1.0.2'
+    implementation 'com.virjar:sekiro-api:1.0.3'
 }
 ```
 
@@ -149,7 +149,12 @@ http://sekiro.virjar.com/asyncInvoke?group=sekiro-demo&action=clientTime&param1=
 {"clientId":"2e77bbfa_869941041217576","data":"process: com.virjar.sekiro.demoapp : now:1570897005965 your param1:自定义参数","ok":true,"status":0}
 ```
 
-client demo 在`app-demo`子工程可以看到，直接运行 app-demo，即可在 sekiro.virjar.com 看到你的设备列表
+client demo 在`app-demo`子工程可以看到，直接运行 app-demo，即可在 sekiro.virjar.com 看到你的设备列表;
+
+客户端处理任务线程池默认最大线程数量为 16 个，可以根据需求通过 HandlerThreadPool.setMaxWorkSize(int maxWorkSize) 方法进行调整但最大限制为 100；
+多线程压测截图：
+![thread](deploy/Thread.png)
+
 
 # 在类似 xposed 的代码注入框架中使用 Sekiro
 
@@ -299,6 +304,10 @@ clientId 用于区分不同手机，同一个接口可以部署在多个手机�
 实现请求到手机的调用转发，区分 invoke 和 asyncInvoke，他们的接口定义一样，只是 asyncInvoke 使用异步 http server 实现，一般情况建议使用 asyncInvoke。
 
 invoke 接口定义比较宽泛，可支持 GET/POST,可支持 `application/x-www-form-urlencoded`和`application/json`,方便传入各种异构参数，不过大多数情况，Get 请求就足够使用。
+
+### 禁用/启用指定设备 /disableClient | /enableClient
+
+如果不想让服务器调度某个设备，可以使用该接口将指定设备踢出调度队列，当然也可以让其重新加入调度队列。
 
 ## client 接口
 
